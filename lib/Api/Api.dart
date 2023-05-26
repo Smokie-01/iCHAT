@@ -121,6 +121,7 @@ class APIs {
   }
 
   static Future<void> sendMessgae(ChatUser chatUser, String msg) async {
+    print(msg);
     // time when messgae was send
     final sentTime = DateTime.now().millisecondsSinceEpoch.toString();
 
