@@ -24,7 +24,7 @@ class ChatMessage {
       type: (json['type']).toString() == MessageType.image.name
           ? MessageType.image
           : MessageType.text,
-      message: json['message'].toString(),
+      message: json['msg'].toString(),
     );
   }
 
