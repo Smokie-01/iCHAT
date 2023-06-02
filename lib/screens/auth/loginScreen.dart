@@ -6,8 +6,6 @@ import 'package:ichat/Api/Api.dart';
 import 'package:ichat/Helper/Snackbar.dart';
 import 'package:ichat/screens/Home_screen.dart';
 
-import '../../main.dart';
-
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
   static const namedRoute = "LoginScreen";

@@ -28,7 +28,7 @@ class ChatUser {
         email: json['email'] ?? "",
         imageUrl: json['imageUrl'] ?? "",
         pushToken: json['push_token'] ?? "",
-        lastActive: json['lastActive'] ?? "",
+        lastActive: json['last_active'] ?? "",
         isOnline: json['isOnline'] ?? false,
         about: json['about'] ?? "",
         createdAT: json['created_at'] ?? "");
@@ -44,6 +44,7 @@ class ChatUser {
     data['isOnline'] = isOnline;
     data['last_active'] = lastActive;
     data['about'] = about;
+    data['created_at'] = createdAT;
     return data;
   }
 }

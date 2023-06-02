@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ichat/Helper/Snackbar.dart';
@@ -9,7 +10,6 @@ import 'package:ichat/screens/auth/loginScreen.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../Api/Api.dart';
-import '../main.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const namedRoute = "ProfileScreen";
@@ -95,6 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Future<void> signOut() async {
       // Sign out from Firebase Authenticatio
 
+      APIs.updateActiveStatus(false);
       // it shows custom progress indicator
       CustomDialog.showProgressIndicator(context);
 
@@ -107,6 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // this will remove the homeScreen from stack
                   Navigator.pop(context),
+
+                  APIs.auth = FirebaseAuth.instance,
                   // this will take you to the loading screen
                   Navigator.pushReplacementNamed(
                       context, LogInScreen.namedRoute)
@@ -153,14 +156,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               File((_image!)),
                               height: mq.height * 0.2,
                               width: mq.height * 0.2,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ))
                         : ClipRRect(
                             borderRadius: BorderRadius.circular(mq.height * .1),
                             child: CachedNetworkImage(
                               height: mq.height * 0.2,
                               width: mq.height * 0.2,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               imageUrl: "${chatUser.imageUrl}",
                               errorWidget: (context, url, error) =>
                                   CircleAvatar(

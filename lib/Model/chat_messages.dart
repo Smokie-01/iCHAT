@@ -36,6 +36,7 @@ class ChatMessage {
     data['sent'] = sent;
     data['type'] = type.name;
     data['msg'] = message;
+
     return data;
   }
 }

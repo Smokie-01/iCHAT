@@ -43,11 +43,21 @@ dependencies:
   google_sign_in: ^6.1.0
   #to handle firebase authentication
   firebase_auth: ^4.4.2
+  
   cloud_firestore: ^4.5.2
+  # to show the user profile and store into cache 
   cached_network_image: ^3.2.3
   provider: ^6.0.5
+  # to pick the images from the cmagera or gallary
   image_picker: ^0.8.7+5
+  # to store the messges 
   firebase_storage: ^11.2.1
+  # to show emoji 
+  emoji_picker_flutter: ^1.5.4
+  firebase_messaging: ^14.6.1
+  http: ^0.13.5
+  flutter_notification_channel: ^2.0.0
+  gallery_saver: ^2.3.2
 
 dev_dependencies:
 

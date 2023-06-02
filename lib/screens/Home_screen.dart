@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ichat/Api/Api.dart';
+import 'package:ichat/Helper/Snackbar.dart';
 import 'package:ichat/Widgets/chat_user_card.dart';
 import '../Model/chat_user.dart';
 import 'Profile_Screen.dart';
@@ -22,7 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    /* this will give the inital value true(Online) as soon as 
+    user opens  to home screen */
     APIs.getSlefInfo();
+
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      //message = pause ----> user offline
+      if (APIs.auth.currentUser != null) {
+        if (message.toString().contains("pause")) {
+          APIs.updateActiveStatus(false);
+        }
+        //message = resume ----> user online
+        if (message.toString().contains("resume")) {
+          APIs.updateActiveStatus(true);
+        }
+      }
+
+      return Future.value(message);
+    });
   }
 
   @override
@@ -98,8 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: IconButton(
             iconSize: 35,
             color: Colors.blueGrey,
-            onPressed: () {},
-            icon: Icon(Icons.add_comment_sharp),
+            onPressed: () {
+              _addChatUser();
+            },
+            icon: Icon(
+              CupertinoIcons.person_add_solid,
+            ),
           ),
           body: StreamBuilder(
             stream: APIs.getAllUser(),
@@ -139,5 +162,59 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _addChatUser() {
+    String email = "";
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            contentPadding:
+                EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 15),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Row(
+              children: [Icon(Icons.message), Text("  Add Users  ")],
+            ),
+            content: TextFormField(
+                autofocus: true,
+                onChanged: (value) {
+                  email = value;
+                },
+                maxLines: null,
+                decoration: InputDecoration(
+                    hintText: "Email Id",
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder())),
+            actions: [
+              TextButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(fontSize: 18),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  "Add",
+                  style: TextStyle(fontSize: 18),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  if (email.isNotEmpty) {
+                    await APIs.addChatuser(email).then((value) {
+                      if (!value) {
+                        CustomDialog.snackbar(context, "User does nto exsist");
+                      }
+                    });
+                  }
+                },
+              )
+            ],
+          );
+        });
   }
 }

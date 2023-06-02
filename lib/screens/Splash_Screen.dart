@@ -3,8 +3,6 @@ import 'package:ichat/Api/Api.dart';
 import 'package:ichat/screens/Home_screen.dart';
 import 'package:ichat/screens/auth/loginScreen.dart';
 
-import '../main.dart';
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   static const namedRoute = "LoginScreen";
