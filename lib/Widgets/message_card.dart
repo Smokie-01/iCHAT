@@ -6,6 +6,7 @@ import 'package:ichat/Api/Api.dart';
 import 'package:ichat/Helper/Snackbar.dart';
 import 'package:ichat/Helper/date_util.dart';
 import 'package:ichat/Model/chat_messages.dart';
+import 'package:ichat/screens/chat_screen.dart';
 
 class MessageCard extends StatefulWidget {
   final ChatMessage message;
@@ -235,7 +236,7 @@ class _MessageCardState extends State<MessageCard> {
     String editedMsg = widget.message.message;
     showDialog(
         context: context,
-        builder: (_) {
+        builder: (BuildContext context) {
           return AlertDialog(
             contentPadding:
                 EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 15),
@@ -268,6 +269,7 @@ class _MessageCardState extends State<MessageCard> {
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   APIs.updateChatMessage(
                     widget.message,
                     editedMsg,

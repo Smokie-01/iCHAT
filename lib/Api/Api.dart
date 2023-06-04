@@ -107,6 +107,24 @@ class APIs {
     }
   }
 
+  static Future<bool> removeUser(String id) async {
+    // check weatther the user exist or not in database
+    final data =
+        await (firestore.collection("users").where("id", isEqualTo: id).get());
+    if (data.docs.isNotEmpty && data.docs.first.id != user.uid) {
+      await (firestore
+          .collection("users")
+          .doc(user.uid)
+          .collection('my_users')
+          .doc(id)
+          .delete());
+      return true;
+    } else {
+      // user dont exisit ;
+      return false;
+    }
+  }
+
 // check weather user already exist or not
   static Future<bool> userExisit() async {
     // check weatther the user exist or not in database

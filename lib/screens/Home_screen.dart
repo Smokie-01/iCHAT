@@ -230,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   if (email.isNotEmpty) {
                     await APIs.addChatuser(email).then((value) {
+                      CustomDialog.snackbar(context, "User added Succesfully");
                       if (!value) {
                         CustomDialog.snackbar(context, "User does nto exsist");
                       }
@@ -242,55 +243,3 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 }
-/*StreamBuilder(
-              stream: APIs.getMyUserId(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                 
-                }
-                return Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ));
-              },
-            )), */
-
-
-            /*StreamBuilder(
-              stream: APIs.getAllUser(),
-              builder: ((context, snapshot) {
-                switch (snapshot.connectionState) {
-
-                  // when data is loading
-                  case ConnectionState.waiting:
-                  case ConnectionState.none:
-                    return Center(child: CircularProgressIndicator());
-
-                  // when data is fetched
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    final data = snapshot.data?.docs;
-                    _list = data
-                            ?.map((e) => ChatUser.fromJson(e.data()))
-                            .toList() ??
-                        [];
-                    if (_list.isNotEmpty) {
-                      return ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        itemCount:
-                            _isSearching ? _searchList.length : _list.length,
-                        itemBuilder: ((context, index) {
-                          return ChatUserCard(
-                            user: _isSearching
-                                ? _searchList[index]
-                                : _list[index],
-                          );
-                        }),
-                      );
-                    } else {
-                      return Center(
-                          child: Text("No Connections has found !! "));
-                    }
-                }
-              }),
-            ), */
