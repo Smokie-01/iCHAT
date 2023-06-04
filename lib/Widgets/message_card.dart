@@ -121,14 +121,10 @@ class _MessageCardState extends State<MessageCard> {
                               Icon(Icons.image)),
                     )),
         ),
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(mq.height * .02),
-              child: Text(MyDateUtil.getTimeInFormat(
-                  context: context, time: widget.message.sent)),
-            ),
-          ],
+        Padding(
+          padding: EdgeInsets.all(mq.height * .02),
+          child: Text(MyDateUtil.getTimeInFormat(
+              context: context, time: widget.message.sent)),
         ),
       ],
     );
@@ -189,7 +185,7 @@ class _MessageCardState extends State<MessageCard> {
               ),
               if (widget.message.type == MessageType.text && isMe)
                 _bottomSheetItems(
-                    title: "Edit Messgae ",
+                    title: "Edit Messsge ",
                     onTap: () {
                       Navigator.pop(context);
                       _showEditMessageBottomSheet();
@@ -246,7 +242,7 @@ class _MessageCardState extends State<MessageCard> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Row(
-              children: [Icon(Icons.message), Text("  Update Messgae ")],
+              children: [Icon(Icons.message), Text("  Update Message")],
             ),
             content: TextFormField(
                 autofocus: true,
@@ -272,12 +268,10 @@ class _MessageCardState extends State<MessageCard> {
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () {
-                  if (mounted)
-                    APIs.updateChatMessgae(
-                      widget.message,
-                      editedMsg,
-                    );
-                  Navigator.pop(context);
+                  APIs.updateChatMessage(
+                    widget.message,
+                    editedMsg,
+                  );
                 },
               )
             ],

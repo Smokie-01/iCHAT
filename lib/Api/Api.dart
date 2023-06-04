@@ -135,12 +135,32 @@ class APIs {
         .set(chatUser.toJson());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser(
+      List<String> usersIds) {
     // a method to get all user from firebase to ui
     return firestore
         .collection("users")
-        .where('id', isNotEqualTo: user.uid)
+        .where("id", whereIn: usersIds)
         .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUserId() {
+    // a method to get all user from firebase to ui
+    return firestore
+        .collection("users")
+        .doc(user.uid)
+        .collection('my_users')
+        .snapshots();
+  }
+
+  static Future<void> sendFirstMessgae(
+      ChatUser chatUser, String msg, MessageType messageType) async {
+    await (firestore
+        .collection("users")
+        .doc(chatUser.id)
+        .collection('my_users')
+        .doc(user.uid)
+        .set({}).then((value) => sendMessgae(chatUser, msg, messageType)));
   }
 
 // function to update user personal info
@@ -248,7 +268,7 @@ class APIs {
     }
   }
 
-  static Future<void> updateChatMessgae(
+  static Future<void> updateChatMessage(
       ChatMessage message, String updatedMsg) async {
     firestore
         .collection(

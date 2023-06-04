@@ -41,6 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
             setState(() {
               _showEmoji = !_showEmoji;
             });
+
             return Future.value(false);
           } else {
             return Future.value(true);
@@ -226,10 +227,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                       child: TextFormField(
                     onTap: () {
-                      if (_showEmoji)
+                      if (_showEmoji) if (mounted) {
                         setState(() {
                           _showEmoji = !_showEmoji;
                         });
+                      }
                     },
                     controller: _textController,
                     keyboardType: TextInputType.multiline,
@@ -290,9 +292,15 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               onPressed: () async {
                 if (_textController.text.isNotEmpty) {
-                  await APIs.sendMessgae(
-                      widget.user, _textController.text, MessageType.text);
-                  _textController.text = "";
+                  if (_chatMessages.isNotEmpty) {
+                    APIs.sendFirstMessgae(
+                        widget.user, _textController.text, MessageType.text);
+                    _textController.text = "";
+                  } else {
+                    await APIs.sendMessgae(
+                        widget.user, _textController.text, MessageType.text);
+                    _textController.text = "";
+                  }
                 }
               },
               icon: Icon(Icons.send))

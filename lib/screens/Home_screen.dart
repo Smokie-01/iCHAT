@@ -62,104 +62,128 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         child: Scaffold(
-          appBar: AppBar(
-            title: _isSearching
-                ? Padding(
-                    padding: const EdgeInsets.only(),
-                    child: TextFormField(
-                      onChanged: (value) {
-                        // when search Text changes update the UI;
-                        _searchList.clear();
-                        for (var user in _list) {
-                          // this will check the enterd value is available in the list or not;
-                          if (user.name!.contains(value.toLowerCase()) ||
-                              user.email!.contains(value.toLowerCase())) {
-                            _searchList.add(user);
+            appBar: AppBar(
+              title: _isSearching
+                  ? Padding(
+                      padding: const EdgeInsets.only(),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          // when search Text changes update the UI;
+                          _searchList.clear();
+                          for (var user in _list) {
+                            // this will check the enterd value is available in the list or not;
+                            if (user.name!.contains(value.toLowerCase()) ||
+                                user.email!.contains(value.toLowerCase())) {
+                              _searchList.add(user);
+                            }
+                            setState(() {
+                              _searchList;
+                            });
                           }
-                          setState(() {
-                            _searchList;
-                          });
-                        }
-                      },
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        hintText: "Name, Email..",
-                        border: InputBorder.none,
+                        },
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          hintText: "Name, Email..",
+                          border: InputBorder.none,
+                        ),
                       ),
-                    ),
-                  )
-                : Text("iChat"),
-            centerTitle: true,
-            leading:
-                IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.home)),
-            backgroundColor: _isSearching ? Colors.white : Colors.black,
-            actions: [
-              //search user button
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = !_isSearching;
-                    });
-                  },
-                  icon: Icon(_isSearching
-                      ? CupertinoIcons.clear_circled_solid
-                      : Icons.search)),
-              // more aoptins button
-              IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, ProfileScreen.namedRoute,
-                        arguments: APIs.me);
-                  },
-                  icon: Icon(Icons.more_vert))
-            ],
-          ),
-          //FLoating action button to add new user
-          floatingActionButton: IconButton(
-            iconSize: 35,
-            color: Colors.blueGrey,
-            onPressed: () {
-              _addChatUser();
-            },
-            icon: Icon(
-              CupertinoIcons.person_add_solid,
+                    )
+                  : Text("iChat"),
+              centerTitle: true,
+              leading:
+                  IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.home)),
+              backgroundColor: _isSearching ? Colors.white : Colors.black,
+              actions: [
+                //search user button
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = !_isSearching;
+                      });
+                    },
+                    icon: Icon(_isSearching
+                        ? CupertinoIcons.clear_circled_solid
+                        : Icons.search)),
+                // more aoptins button
+                IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, ProfileScreen.namedRoute,
+                          arguments: APIs.me);
+                    },
+                    icon: Icon(Icons.more_vert))
+              ],
             ),
-          ),
-          body: StreamBuilder(
-            stream: APIs.getAllUser(),
-            builder: ((context, snapshot) {
-              switch (snapshot.connectionState) {
+            //FLoating action button to add new user
+            floatingActionButton: IconButton(
+              iconSize: 35,
+              color: Colors.blueGrey,
+              onPressed: () {
+                _addChatUser();
+              },
+              icon: Icon(
+                CupertinoIcons.person_add_solid,
+              ),
+            ),
+            body: StreamBuilder(
+              stream: APIs.getMyUserId(),
 
-                // when data is loading
-                case ConnectionState.waiting:
-                case ConnectionState.none:
-                  return Center(child: CircularProgressIndicator());
+              // get only those users we know
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
 
-                // when data is fetched
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  final data = snapshot.data?.docs;
-                  _list =
-                      data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                          [];
-                  if (_list.isNotEmpty) {
-                    return ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      itemCount:
-                          _isSearching ? _searchList.length : _list.length,
-                      itemBuilder: ((context, index) {
-                        return ChatUserCard(
-                          user:
-                              _isSearching ? _searchList[index] : _list[index],
-                        );
+                  // when data is loading
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    return Center(child: CircularProgressIndicator());
+
+                  // when data is fetched
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    return StreamBuilder(
+                      stream: APIs.getAllUser(
+                          snapshot.data!.docs.map((e) => e.id).toList()),
+
+                      // get only those users , whose IDs are provided;
+                      builder: ((context, snapshot) {
+                        switch (snapshot.connectionState) {
+
+                          // when data is loading
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                          // return Center(child: CircularProgressIndicator());
+
+                          // when data is fetched
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            _list = data
+                                    ?.map((e) => ChatUser.fromJson(e.data()))
+                                    .toList() ??
+                                [];
+                            if (_list.isNotEmpty) {
+                              return ListView.builder(
+                                physics: BouncingScrollPhysics(),
+                                itemCount: _isSearching
+                                    ? _searchList.length
+                                    : _list.length,
+                                itemBuilder: ((context, index) {
+                                  return ChatUserCard(
+                                    user: _isSearching
+                                        ? _searchList[index]
+                                        : _list[index],
+                                  );
+                                }),
+                              );
+                            } else {
+                              return Center(
+                                  child: Text("No Connections has found !! "));
+                            }
+                        }
                       }),
                     );
-                  } else {
-                    return Center(child: Text("No Connections has found !! "));
-                  }
-              }
-            }),
-          ),
-        ),
+                }
+              },
+            )),
       ),
     );
   }
@@ -218,3 +242,55 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 }
+/*StreamBuilder(
+              stream: APIs.getMyUserId(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                 
+                }
+                return Center(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ));
+              },
+            )), */
+
+
+            /*StreamBuilder(
+              stream: APIs.getAllUser(),
+              builder: ((context, snapshot) {
+                switch (snapshot.connectionState) {
+
+                  // when data is loading
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    return Center(child: CircularProgressIndicator());
+
+                  // when data is fetched
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    final data = snapshot.data?.docs;
+                    _list = data
+                            ?.map((e) => ChatUser.fromJson(e.data()))
+                            .toList() ??
+                        [];
+                    if (_list.isNotEmpty) {
+                      return ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount:
+                            _isSearching ? _searchList.length : _list.length,
+                        itemBuilder: ((context, index) {
+                          return ChatUserCard(
+                            user: _isSearching
+                                ? _searchList[index]
+                                : _list[index],
+                          );
+                        }),
+                      );
+                    } else {
+                      return Center(
+                          child: Text("No Connections has found !! "));
+                    }
+                }
+              }),
+            ), */
