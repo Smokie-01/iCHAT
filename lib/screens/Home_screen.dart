@@ -129,58 +129,68 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // get only those users we know
               builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
+                if (snapshot.hasData) {
+                  var _myUsers = snapshot.data?.docs.map((e) => e.id).toList();
+                  if (_myUsers!.isNotEmpty) {
+                    switch (snapshot.connectionState) {
 
-                  // when data is loading
-                  case ConnectionState.waiting:
-                  case ConnectionState.none:
-                    return Center(child: CircularProgressIndicator());
+                      // when data is loading
+                      case ConnectionState.waiting:
+                      case ConnectionState.none:
+                        return Center(child: CircularProgressIndicator());
 
-                  // when data is fetched
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    return StreamBuilder(
-                      stream: APIs.getAllUser(
-                          snapshot.data!.docs.map((e) => e.id).toList()),
+                      // when data is fetched
+                      case ConnectionState.active:
+                      case ConnectionState.done:
+                        return StreamBuilder(
+                          stream: APIs.getAllUser(_myUsers),
 
-                      // get only those users , whose IDs are provided;
-                      builder: ((context, snapshot) {
-                        switch (snapshot.connectionState) {
+                          // get only those users , whose IDs are provided;
+                          builder: ((context, snapshot) {
+                            switch (snapshot.connectionState) {
 
-                          // when data is loading
-                          case ConnectionState.waiting:
-                          case ConnectionState.none:
-                          // return Center(child: CircularProgressIndicator());
+                              // when data is loading
+                              case ConnectionState.waiting:
+                              case ConnectionState.none:
+                              // return Center(child: CircularProgressIndicator());
 
-                          // when data is fetched
-                          case ConnectionState.active:
-                          case ConnectionState.done:
-                            final data = snapshot.data?.docs;
-                            _list = data
-                                    ?.map((e) => ChatUser.fromJson(e.data()))
-                                    .toList() ??
-                                [];
-                            if (_list.isNotEmpty) {
-                              return ListView.builder(
-                                physics: BouncingScrollPhysics(),
-                                itemCount: _isSearching
-                                    ? _searchList.length
-                                    : _list.length,
-                                itemBuilder: ((context, index) {
-                                  return ChatUserCard(
-                                    user: _isSearching
-                                        ? _searchList[index]
-                                        : _list[index],
+                              // when data is fetched
+                              case ConnectionState.active:
+                              case ConnectionState.done:
+                                final data = snapshot.data?.docs;
+                                _list = data
+                                        ?.map(
+                                            (e) => ChatUser.fromJson(e.data()))
+                                        .toList() ??
+                                    [];
+                                if (_list.isNotEmpty) {
+                                  return ListView.builder(
+                                    physics: BouncingScrollPhysics(),
+                                    itemCount: _isSearching
+                                        ? _searchList.length
+                                        : _list.length,
+                                    itemBuilder: ((context, index) {
+                                      return ChatUserCard(
+                                        user: _isSearching
+                                            ? _searchList[index]
+                                            : _list[index],
+                                      );
+                                    }),
                                   );
-                                }),
-                              );
-                            } else {
-                              return Center(
-                                  child: Text("No Connections has found !! "));
+                                } else {
+                                  return Center(
+                                      child:
+                                          Text("No Connections has found !! "));
+                                }
                             }
-                        }
-                      }),
-                    );
+                          }),
+                        );
+                    }
+                  } else {
+                    return Center(child: Text("No Connections has found !! "));
+                  }
+                } else {
+                  return Center(child: Text("No Connections has found !! "));
                 }
               },
             )),

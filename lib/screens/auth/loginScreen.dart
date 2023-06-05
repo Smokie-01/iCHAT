@@ -50,14 +50,15 @@ class _LogInScreenState extends State<LogInScreen> {
   Future<UserCredential?> _signInWithGoogle() async {
     try {
       await InternetAddress.lookup("google.com");
-      // Trigger the authentication flow
+
+      // It initiates google signin procces and retrive google account information;
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
 
-      // Create a new credential
+      // this line of code retrieves the authentication credentials associated with the signed-in Google user.
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
@@ -78,6 +79,7 @@ class _LogInScreenState extends State<LogInScreen> {
     // initializing media query to acceses diffrent screen
     final mq = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         title: Text(" Welcome to iChat"),
         automaticallyImplyLeading: false,
@@ -101,7 +103,7 @@ class _LogInScreenState extends State<LogInScreen> {
               height: mq.height * .07,
               child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      shape: StadiumBorder(), backgroundColor: Colors.black),
+                      shape: StadiumBorder(), backgroundColor: Colors.black54),
                   onPressed: _handleGooglelogin,
                   icon: Image.asset(
                     "images/google.png",
@@ -109,7 +111,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   ),
                   label: Text(
                     "Sign In With Google",
-                    style: TextStyle(fontSize: 19),
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   )))
         ],
       ),

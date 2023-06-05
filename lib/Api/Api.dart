@@ -5,13 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ichat/Helper/Snackbar.dart';
 
 import 'package:ichat/Model/chat_messages.dart';
 
 import 'package:ichat/Model/chat_user.dart';
 import 'package:http/http.dart' as http;
+import 'package:ichat/screens/auth/loginScreen.dart';
 
 class APIs {
   // For Authentication
@@ -151,6 +154,32 @@ class APIs {
         .collection("users")
         .doc(user.uid)
         .set(chatUser.toJson());
+  }
+
+  static Future<void> signOut(BuildContext context) async {
+    // Sign out from Firebase Authenticatio
+
+    APIs.updateActiveStatus(false);
+    // it shows custom progress indicator
+    CustomDialog.showProgressIndicator(context);
+
+    //it will remove the User id from app
+    await APIs.auth.signOut().then((value) async => {
+          //it will remove the id from data base
+          await APIs.googleSignIn.signOut().then((value) => {
+                // this will pop the loading indicator
+                Navigator.pop(context),
+
+                // this will remove the homeScreen from stack
+                Navigator.pop(context),
+
+                APIs.auth = FirebaseAuth.instance,
+                // this will take you to the loading screen
+                Navigator.pushReplacementNamed(context, LogInScreen.namedRoute)
+              })
+        });
+
+    // Sign out from Google Sign-In.
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser(

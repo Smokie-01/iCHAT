@@ -14,8 +14,10 @@ import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+// to hide the statusBar and Navigation Bar , in the app
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  // to set a fix orientation of device , reegardless of the positions
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) async {

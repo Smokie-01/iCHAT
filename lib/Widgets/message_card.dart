@@ -6,7 +6,6 @@ import 'package:ichat/Api/Api.dart';
 import 'package:ichat/Helper/Snackbar.dart';
 import 'package:ichat/Helper/date_util.dart';
 import 'package:ichat/Model/chat_messages.dart';
-import 'package:ichat/screens/chat_screen.dart';
 
 class MessageCard extends StatefulWidget {
   final ChatMessage message;
@@ -139,7 +138,7 @@ class _MessageCardState extends State<MessageCard> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         context: context,
-        builder: (_) {
+        builder: (BuildContext context) {
           return ListView(
             padding:
                 EdgeInsets.only(top: mq.height * .06, bottom: mq.height * .02),
@@ -189,7 +188,7 @@ class _MessageCardState extends State<MessageCard> {
                     title: "Edit Messsge ",
                     onTap: () {
                       Navigator.pop(context);
-                      _showEditMessageBottomSheet();
+                      _showEditMessageBottomSheet(context);
                     },
                     icon: Icon(Icons.edit_note)),
               if (isMe)
@@ -232,7 +231,7 @@ class _MessageCardState extends State<MessageCard> {
         });
   }
 
-  void _showEditMessageBottomSheet() {
+  void _showEditMessageBottomSheet(BuildContext context) {
     String editedMsg = widget.message.message;
     showDialog(
         context: context,

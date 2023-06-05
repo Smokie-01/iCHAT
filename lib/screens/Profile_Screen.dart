@@ -92,33 +92,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
     }
 
-    Future<void> signOut() async {
-      // Sign out from Firebase Authenticatio
-
-      APIs.updateActiveStatus(false);
-      // it shows custom progress indicator
-      CustomDialog.showProgressIndicator(context);
-
-      //it will remove the User id from app
-      await APIs.auth.signOut().then((value) async => {
-            //it will remove the id from data base
-            await APIs.googleSignIn.signOut().then((value) => {
-                  // this will pop the loading indicator
-                  Navigator.pop(context),
-
-                  // this will remove the homeScreen from stack
-                  Navigator.pop(context),
-
-                  APIs.auth = FirebaseAuth.instance,
-                  // this will take you to the loading screen
-                  Navigator.pushReplacementNamed(
-                      context, LogInScreen.namedRoute)
-                })
-          });
-
-      // Sign out from Google Sign-In.
-    }
-
     final ChatUser chatUser =
         ModalRoute.of(context)!.settings.arguments as ChatUser;
 
@@ -130,7 +103,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         floatingActionButton: Padding(
           padding: EdgeInsets.only(bottom: mq.height * 0.01),
           child: FloatingActionButton.extended(
-            onPressed: signOut,
+            onPressed: () {
+              APIs.signOut(context);
+            },
             icon: Icon(Icons.logout),
             label: Text('LogOut'),
           ),
