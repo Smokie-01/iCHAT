@@ -60,44 +60,54 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: StreamBuilder(
                   stream: APIs.getAllMessgaes(widget.user),
                   builder: ((context, snapshot) {
-                    switch (snapshot.connectionState) {
+                    if (snapshot.hasData) {
+                      switch (snapshot.connectionState) {
 
-                      // when data is loading
-                      case ConnectionState.waiting:
-                      case ConnectionState.none:
-                        return SizedBox();
+                        // when data is loading
+                        case ConnectionState.waiting:
+                        case ConnectionState.none:
+                          return SizedBox();
 
-                      // when data is fetched
-                      case ConnectionState.active:
-                      case ConnectionState.done:
-                        final data = snapshot.data!.docs;
+                        // when data is fetched
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          final data = snapshot.data!.docs;
 
-                        _chatMessages = data
-                            .map((e) => ChatMessage.fromJson(e.data()))
-                            .toList();
+                          _chatMessages = data
+                              .map((e) => ChatMessage.fromJson(e.data()))
+                              .toList();
 
-                        if (_chatMessages.isNotEmpty) {
-                          return ListView.builder(
-                            reverse: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: _chatMessages.length,
-                            itemBuilder: ((context, index) {
-                              return MessageCard(message: _chatMessages[index]);
-                            }),
-                          );
-                        } else
-                          return Center(
-                              child: Text(
-                            " Say Hii.. !!! ",
-                            style: TextStyle(color: Colors.white, fontSize: 30),
-                          ));
+                          if (_chatMessages.isNotEmpty) {
+                            return ListView.builder(
+                              reverse: true,
+                              physics: BouncingScrollPhysics(),
+                              itemCount: _chatMessages.length,
+                              itemBuilder: ((context, index) {
+                                return MessageCard(
+                                    message: _chatMessages[index]);
+                              }),
+                            );
+                          } else
+                            return Center(
+                                child: Text(
+                              " Say Hii.. !!! ",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 30),
+                            ));
+                      }
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      );
                     }
                   }),
                 ),
               ),
               if (_isUploading)
                 Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.center,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                     )),
